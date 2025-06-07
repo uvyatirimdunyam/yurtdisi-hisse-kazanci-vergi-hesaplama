@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yurt Dışı Hisse Vergi Hesaplama</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 20px;
+      background-color: #f2f4f8;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      font-weight: 500;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #e9f7ef;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Yurt Dışı Hisse Vergi Hesaplayıcı</h2>
+  
+  <label>Alış Tutarı (TL):</label>
+  <input type="number" id="alis" />
+
+  <label>Satış Tutarı (TL):</label>
+  <input type="number" id="satis" />
+
+  <label>Alış Tarihi (Ay/Yıl):</label>
+  <select id="alisTarihi"></select>
+
+  <label>Satış Tarihi (Ay/Yıl):</label>
+  <select id="satisTarihi"></select>
+
+  <button onclick="hesapla()">Hesapla</button>
+
+  <div id="sonuc" class="result"></div>
+</div>
+
+<script>
+  const yiufeVerileri = {
+    "1994-01": 0.79, "1994-02": 0.87, "1994-03": 0.94, "1994-04": 1.25,
+    "1994-05": 1.36, "1994-06": 1.39, "1994-07": 1.4, "1994-08": 1.44,
+    "1994-09": 1.51, "1994-10": 1.62, "1994-11": 1.72, "1994-12": 1.87,
+    // ... Bu araya 1995'ten 2025'e kadar olan veriler eklenecek.
+    "2023-05": 2179.02, "2023-06": 2320.72,
+    "2024-04": 3369.98, "2024-05": 3435.96, "2024-06": 3483.25,
+    "2025-04": 4128.19, "2025-05": 4230.69, "2025-06": 4230.69
+  };
+
+  const selectAylar = document.querySelectorAll("select");
+  const aylar = [
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+  ];
+
+  for (let yil = 1994; yil <= 2025; yil++) {
+    for (let i = 0; i < 12; i++) {
+      const ay = String(i + 1).padStart(2, '0');
+      const deger = `${yil}-${ay}`;
+      if (yiufeVerileri[deger]) {
+        const label = `${aylar[i]} ${yil}`;
+        selectAylar.forEach(select => {
+          const opt = document.createElement("option");
+          opt.value = deger;
+          opt.textContent = label;
+          select.appendChild(opt);
+        });
+      }
+    }
+  }
+
+  function oncekiAy(dateStr) {
+    const date = new Date(dateStr + "-01");
+    date.setMonth(date.getMonth() - 1);
+    return date.toISOString().slice(0, 7);
+  }
+
+  function hesapla() {
+    const alisTutar = parseFloat(document.getElementById("alis").value);
+    const satisTutar = parseFloat(document.getElementById("satis").value);
+    const alisTarih = document.getElementById("alisTarihi").value;
+    const satisTarih = document.getElementById("satisTarihi").value;
+    const sonucDiv = document.getElementById("sonuc");
+
+    const oncekiAlis = oncekiAy(alisTarih);
+    const oncekiSatis = oncekiAy(satisTarih);
+
+    const yiufeAlis = yiufeVerileri[oncekiAlis];
+    const yiufeSatis = yiufeVerileri[oncekiSatis];
+
+    if (!yiufeAlis || !yiufeSatis) {
+      sonucDiv.innerHTML = `<p class="error">Seçilen aylar için Yİ-ÜFE verisi bulunamadı. (${oncekiAlis} - ${oncekiSatis})</p>`;
+      return;
+    }
+
+    const artisYuzdesi = ((yiufeSatis - yiufeAlis) / yiufeAlis);
+    const duzeltilmisMaliyet = alisTutar * (1 + artisYuzdesi);
+    const kazanc = satisTutar - duzeltilmisMaliyet;
+    const vergi = kazanc > 0 ? kazanc * 0.15 : 0;
+
+    sonucDiv.innerHTML = `
+      <p><strong>Düzeltilmiş maliyet:</strong> ${duzeltilmisMaliyet.toFixed(2)} TL</p>
+      <p><strong>Enflasyon düzeltilmiş kazanç:</strong> ${kazanc.toFixed(2)} TL</p>
+      <p><strong>Ödenecek vergi:</strong> ${vergi.toFixed(2)} TL</p>
+      <hr />
+      <p><strong>Yİ-ÜFE (${oncekiAlis}):</strong> ${yiufeAlis}</p>
+      <p><strong>Yİ-ÜFE (${oncekiSatis}):</strong> ${yiufeSatis}</p>
+      <p><strong>Artış yüzdesi:</strong> ${(artisYuzdesi * 100).toFixed(2)}%</p>
+    `;
+  }
+</script>
+</body>
+</html>
