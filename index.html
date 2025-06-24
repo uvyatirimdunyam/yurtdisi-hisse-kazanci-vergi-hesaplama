@@ -4,95 +4,244 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Yurt Dışı Hisse/ETF Kazançları Vergi Hesaplama</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
   <style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap');
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 20px;
-      background-color: #f2f4f8;
-      color: #333;
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #f4f6fb 0%, #ddeefd 100%);
+      color: #222;
+      margin: 0;
+      min-height: 100vh;
     }
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      max-width: 480px;
+      margin: 3rem auto 2rem auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(60, 100, 180, 0.10), 0 1.5px 6px 0 rgba(0,0,0,0.06);
+      padding: 2.5rem 2rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      animation: fade-in 1.2s;
+    }
+    @keyframes fade-in {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .container::before {
+      content: "";
+      position: absolute;
+      left: -60px; top: -60px;
+      width: 180px; height: 180px;
+      background: linear-gradient(135deg, #5bbcff 0%, #007bff 100%);
+      border-radius: 50%;
+      opacity: 0.12;
+      z-index: 0;
     }
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
+      font-weight: 700;
+      color: #007bff;
+      margin-bottom: 1.1rem;
+      letter-spacing: 0.5px;
     }
-    label {
-      font-weight: 500;
-    }
-    select, input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
+    .info-box {
+      background: #e5f2ff;
+      border-left: 5px solid #007bff;
       border-radius: 6px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.90rem;
+      color: #2c3e50;
+      box-shadow: 0 1px 2px 0 rgba(0,123,255,0.06);
+    }
+    .info-box i {
+      margin-right: 8px;
+      color: #007bff;
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 150px;
+      margin-bottom: 0;
+      position: relative;
+    }
+    .form-group label {
+      font-weight: 600;
+      color: #444;
+      padding: 2px 4px 4px 2px;
+      font-size: 0.7rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.02em;
+    }
+    .form-group input[type="number"], .form-group select {
+      font-family: inherit;
+      font-size: 0.90rem;
+      padding: 10px 11px;
+      border: 1.5px solid #b8cae6;
+      border-radius: 6px;
+      background: #f7fbff;
+      margin-bottom: 0;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+    .form-group input[type="number"]:focus,
+    .form-group select:focus {
+      border-color: #007bff;
+      background: #f0f8ff;
+    }
+    .form-group input[type="number"]::-webkit-inner-spin-button,
+    .form-group input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .form-group input[type="number"] {
+      appearance: textfield;
+    }
+    .form-group .input-icon {
+      position: absolute;
+      right: 14px;
+      top: 38px;
+      color: #aad3ff;
+      pointer-events: none;
+      font-size: 1.1em;
+    }
+    .form-group .hint {
+      font-size: 0.90rem;
+      color: #a0a7b5;
+      margin-top: 2px;
+      margin-bottom: 0;
     }
     button {
       width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
+      padding: 13px;
+      background: linear-gradient(90deg, #007bff 60%, #00c6fb 100%);
+      color: #fff;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 7px;
+      font-size: 1.16rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-top: 10px;
       cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0,123,255,0.08);
+      transition: background 0.23s, box-shadow 0.22s, transform 0.13s;
+      position: relative;
+      z-index: 2;
     }
-    button:hover {
-      background-color: #0056b3;
+    button:active {
+      background: linear-gradient(90deg, #0056b3 0%, #007bff 100%);
+      box-shadow: 0 1px 3px 0 rgba(0,123,255,0.12);
+      transform: scale(0.98);
     }
     .result {
       margin-top: 2rem;
-      padding: 1rem;
-      background-color: #e9f7ef;
-      border: 1px solid #c3e6cb;
-      border-radius: 6px;
+      padding: 1.16rem 1.1rem;
+      background: linear-gradient(90deg,#e8fff3 60%, #e3fbff 100%);
+      border: 1.3px solid #9de1c4;
+      border-radius: 9px;
+      font-size: 1.07rem;
+      color: #125c32;
+      box-shadow: 0 1px 4px 0 rgba(65,170,120,0.08);
+      animation: fade-in 0.8s;
+    }
+    .result strong {
+      color: #087d5b;
     }
     .error {
-      color: red;
+      color: #e63946;
+      background: #ffeaea;
+      border: 1.1px solid #f7b2b2;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 1.2rem;
+      font-size: 1.05rem;
+      text-align: left;
+      animation: fade-in 0.5s;
+    }
+    .footer-note {
+      margin-top: 2.5rem;
+      font-size: 0.97rem;
+      color: #9ca1b1;
+      text-align: center;
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 560px) {
+      .container {
+        padding: 1.25rem 0.5rem 1rem 0.5rem;
+        margin-top: 1.3rem;
+      }
+      .form-row { gap: 7px; }
+      .form-group { min-width: 100px;}
     }
   </style>
 </head>
 <body>
 <div class="container">
-  <h2>Yurt Dışı Hisse/ETF Kazançları Vergi Hesaplayıcı</h2>
-
-  <p align="justify">Yurtdışı hisse senedi veya ETF satışlarınızdan elde ettiğiniz kazançlar için Türkiye’de uygulanan vergi hesaplamalarını kolaylaştırmak amacıyla geliştirilmiştir. 
-    <p align="justify">Yurtdışı hisse satışlarından elde edilen kazançların vergilendirilmesinde, enflasyon etkisinin (Yurt İçi Üretici Fiyat Endeksi - Yİ-ÜFE) dikkate alınması zorunludur.
-<p align="justify">Sitemiz, satın alma ve satış tarihlerinizi seçerek, bu iki tarih arasındaki Yİ-ÜFE verilerini otomatik olarak kullanır. Böylece, yatırımınızın enflasyonla düzeltilmiş maliyetini ve gerçek kazancınızı doğru şekilde hesaplamayı amaçlar. Ayrıca, 110.000 TL’ye kadar olan kazançlar için geçerli olan %15 vergi oranı uygulanarak, ödenmesi gereken vergi tutarını da anında görmenizi sağlar.
-
-<p align="justify">Kullanıcı dostu, modern ve responsive tasarımı sayesinde masaüstü veya mobil cihazlardan rahatlıkla kullanılabilir. Böylece, yatırımcılar vergisel yükümlülüklerini hesaplamak için karmaşık tablolar veya manuel hesaplamalarla uğraşmak zorunda kalmaz.
-
-<p align="justify">Lütfen sitedeki verileri teyit ediniz. Geri dönüşlerinizi uvyatirimdunyam@gmail.com adresine iletebilirsiniz.
-
-</p>
-  
-  <label>Alış Tutarı (TL):</label>
-  <input type="number" id="alis" />
-
-  <label>Satış Tutarı (TL):</label>
-  <input type="number" id="satis" />
-
-  <label>Alış Tarihi (Ay/Yıl):</label>
-  <select id="alisTarihi"></select>
-
-  <label>Satış Tarihi (Ay/Yıl):</label>
-  <select id="satisTarihi"></select>
-
-  <button onclick="hesapla()">Hesapla</button>
-
-  <div id="sonuc" class="result"></div>
+  <h2>
+    <i class="fa-solid fa-calculator"></i> Yurt Dışı Hisse/ETF Vergi Hesaplama
+  </h2>
+  <div class="info-box">
+    <i class="fa-solid fa-circle-info"></i>
+    Yurt dışı hisse senedi veya ETF satışlarınızdan elde ettiğiniz kazançlar için, <b>enflasyon (Yİ-ÜFE) etkisiyle güncellenmiş</b> maliyet ve <b>%15 vergi</b> hesaplamasını kolayca yapın.<br>
+    <span style="color:#007bff;">Tüm veriler bilgilendirme amaçlıdır, resmi kaynakları kontrol edin.</span>
+  </div>
+  <form id="vergiForm" autocomplete="off" onsubmit="return false;">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="alis"><i class="fa-solid fa-arrow-down"></i> Alış Tutarı (TL):</label>
+        <input type="number" id="alis" min="0" step="0.01" placeholder="10000" />
+        <span class="input-icon"><i class="fa-solid fa-coins"></i></span>
+        <span class="hint">Satın alırken ödediğiniz toplam tutar</span>
+      </div>
+      <div class="form-group">
+        <label for="alisAy"><i class="fa-regular fa-calendar"></i> Alış Ayı:</label>
+        <select id="alisAy"></select>
+      </div>
+      <div class="form-group">
+        <label for="alisYil"><i class="fa-regular fa-calendar"></i> Alış Yılı:</label>
+        <select id="alisYil"></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="satis"><i class="fa-solid fa-arrow-up"></i> Satış Tutarı (TL):</label>
+        <input type="number" id="satis" min="0" step="0.01" placeholder="15000" />
+        <span class="input-icon"><i class="fa-solid fa-money-bill-trend-up"></i></span>
+        <span class="hint">Satıştan elinize geçen toplam tutar</span>
+      </div>
+      <div class="form-group">
+        <label for="satisAy"><i class="fa-regular fa-calendar"></i> Satış Ayı:</label>
+        <select id="satisAy"></select>
+      </div>
+      <div class="form-group">
+        <label for="satisYil"><i class="fa-regular fa-calendar"></i> Satış Yılı:</label>
+        <select id="satisYil"></select>
+      </div>
+    </div>
+    <button type="button" id="hesaplaBtn"><i class="fa-solid fa-calculator"></i> Hesapla</button>
+  </form>
+  <div id="sonuc"></div>
 </div>
-
+<div class="footer-note">
+  <i class="fa-solid fa-envelope"></i>
+  Geri bildirim & öneri için: <a href="mailto:uvyatirimdunyam@gmail.com" style="color:#007bff; text-decoration:underline;">uvyatirimdunyam@gmail.com</a>
+</div>
 <script>
+  // --- Yİ-ÜFE verileri (kısaltılmış, tam sürümde eksiksiz olmalı) ---
   const yiufeVerileri = {
-    "2010-01": 164.94, "2010-02": 167.68, "2010-03": 170.94, "2010-04": 174.96, "2010-05": 172.95, "2010-06": 172.08, "2010-07": 171.81, "2010-08": 173.79, "2010-09": 174.67, "2010-10": 176.78, "2010-11": 176.23, "2010-12": 178.54,
+"2010-01": 164.94, "2010-02": 167.68, "2010-03": 170.94, "2010-04": 174.96, "2010-05": 172.95, "2010-06": 172.08, "2010-07": 171.81, "2010-08": 173.79, "2010-09": 174.67, "2010-10": 176.78, "2010-11": 176.23, "2010-12": 178.54,
 "2011-01": 182.75, "2011-02": 185.9, "2011-03": 188.17, "2011-04": 189.32, "2011-05": 189.61, "2011-06": 189.62, "2011-07": 189.57, "2011-08": 192.91, "2011-09": 195.89, "2011-10": 199.03, "2011-11": 200.32, "2011-12": 202.33,
 "2012-01": 203.1, "2012-02": 202.91, "2012-03": 203.64, "2012-04": 203.81, "2012-05": 204.89, "2012-06": 201.83, "2012-07": 201.2, "2012-08": 201.71, "2012-09": 203.79, "2012-10": 204.15, "2012-11": 207.54, "2012-12": 207.29,
 "2013-01": 206.91, "2013-02": 206.65, "2013-03": 208.33, "2013-04": 207.27, "2013-05": 209.34, "2013-06": 212.39, "2013-07": 214.5, "2013-08": 214.59, "2013-09": 216.48, "2013-10": 217.97, "2013-11": 219.31, "2013-12": 221.74,
@@ -108,43 +257,83 @@
 "2023-01": 2105.17, "2023-02": 2138.04, "2023-03": 2147.44, "2023-04": 2164.94, "2023-05": 2179.02, "2023-06": 2320.72, "2023-07": 2511.75, "2023-08": 2659.6, "2023-09": 2749.98, "2023-10": 2803.29, "2023-11": 2882.04, "2023-12": 2915.02,
 "2024-01": 3035.59, "2024-02": 3149.03, "2024-03": 3252.79, "2024-04": 3369.98, "2024-05": 3435.96, "2024-06": 3483.25, "2024-07": 3550.88, "2024-08": 3610.51, "2024-09": 3659.84, "2024-10": 3707.1, "2024-11": 3731.43, "2024-12": 3746.52,
 "2025-01": 3861.33, "2025-02": 3943.01, "2025-03": 4017.3, "2025-04": 4128.19, "2025-05": 4230.69,
-
   };
 
-  const selectAylar = document.querySelectorAll("select");
   const aylar = [
+    "01", "02", "03", "04", "05", "06",
+    "07", "08", "09", "10", "11", "12"
+  ];
+  const aylarIsim = [
     "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
     "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
   ];
 
-  for (let yil = 2010; yil <= 2025; yil++) {
-    for (let i = 0; i < 12; i++) {
-      const ay = String(i + 1).padStart(2, '0');
-      const deger = `${yil}-${ay}`;
-      if (yiufeVerileri[deger]) {
-        const label = `${aylar[i]} ${yil}`;
-        selectAylar.forEach(select => {
-          const opt = document.createElement("option");
-          opt.value = deger;
-          opt.textContent = label;
-          select.appendChild(opt);
-        });
-      }
-    }
-  }
+  function doldurSecimler() {
+    const alisAy = document.getElementById("alisAy");
+    const satisAy = document.getElementById("satisAy");
+    const alisYil = document.getElementById("alisYil");
+    const satisYil = document.getElementById("satisYil");
 
-  function oncekiAy(dateStr) {
-    const date = new Date(dateStr + "-01");
+    aylar.forEach((deger, i) => {
+      const option = document.createElement("option");
+      option.value = deger;
+      option.textContent = aylarIsim[i];
+      alisAy.appendChild(option.cloneNode(true));
+      satisAy.appendChild(option.cloneNode(true));
+    });
+
+    for (let yil = 2010; yil <= 2025; yil++) {
+      const option = document.createElement("option");
+      option.value = yil;
+      option.textContent = yil;
+      alisYil.appendChild(option.cloneNode(true));
+      satisYil.appendChild(option.cloneNode(true));
+    }
+
+    // Varsayılan olarak bugünkü ay/yıl seçili gelsin
+    const today = new Date();
+    alisAy.value = aylar[today.getMonth()];
+    satisAy.value = aylar[today.getMonth()];
+    alisYil.value = today.getFullYear();
+    satisYil.value = today.getFullYear();
+  }
+  doldurSecimler();
+
+  function oncekiAy(yyyyMm) {
+    const date = new Date(yyyyMm + "-01");
     date.setMonth(date.getMonth() - 1);
     return date.toISOString().slice(0, 7);
+  }
+
+  function girdiKontrolleri(alisTutar, satisTutar, alisTarih, satisTarih) {
+    if (isNaN(alisTutar) || alisTutar <= 0) return "Lütfen geçerli bir alış tutarı girin.";
+    if (isNaN(satisTutar) || satisTutar <= 0) return "Lütfen geçerli bir satış tutarı girin.";
+    if (alisTarih > satisTarih)
+      return "Alış tarihi, satış tarihinden sonra olamaz!";
+    if (alisTarih === satisTarih)
+      return "Alış ve satış ayı/yılı aynı olamaz!";
+    return "";
   }
 
   function hesapla() {
     const alisTutar = parseFloat(document.getElementById("alis").value);
     const satisTutar = parseFloat(document.getElementById("satis").value);
-    const alisTarih = document.getElementById("alisTarihi").value;
-    const satisTarih = document.getElementById("satisTarihi").value;
+    const alisAy = document.getElementById("alisAy").value;
+    const alisYil = document.getElementById("alisYil").value;
+    const satisAy = document.getElementById("satisAy").value;
+    const satisYil = document.getElementById("satisYil").value;
     const sonucDiv = document.getElementById("sonuc");
+    sonucDiv.innerHTML = "";
+
+    const alisTarih = `${alisYil}-${alisAy}`;
+    const satisTarih = `${satisYil}-${satisAy}`;
+
+    // Hata kontrolü
+    const hata = girdiKontrolleri(alisTutar, satisTutar, alisTarih, satisTarih);
+    if (hata) {
+      sonucDiv.innerHTML = `<div class="error"><i class="fa-solid fa-circle-exclamation"></i> ${hata}</div>`;
+      return;
+    }
 
     const oncekiAlis = oncekiAy(alisTarih);
     const oncekiSatis = oncekiAy(satisTarih);
@@ -153,7 +342,7 @@
     const yiufeSatis = yiufeVerileri[oncekiSatis];
 
     if (!yiufeAlis || !yiufeSatis) {
-      sonucDiv.innerHTML = `<p class="error">Seçilen aylar için Yİ-ÜFE verisi bulunamadı. (${oncekiAlis} - ${oncekiSatis})</p>`;
+      sonucDiv.innerHTML = `<div class="error"><i class="fa-solid fa-ban"></i> Seçilen aylar için Yİ-ÜFE verisi bulunamadı. <br><b>(${oncekiAlis} - ${oncekiSatis})</b></div>`;
       return;
     }
 
@@ -163,15 +352,26 @@
     const vergi = kazanc > 0 ? kazanc * 0.15 : 0;
 
     sonucDiv.innerHTML = `
-      <p><strong>Düzeltilmiş maliyet:</strong> ${duzeltilmisMaliyet.toFixed(2)} TL</p>
-      <p><strong>Enflasyon düzeltilmiş kazanç:</strong> ${kazanc.toFixed(2)} TL</p>
-      <p><strong>Ödenecek vergi:</strong> ${vergi.toFixed(2)} TL</p>
-      <hr />
-      <p><strong>Yİ-ÜFE (${oncekiAlis}):</strong> ${yiufeAlis}</p>
-      <p><strong>Yİ-ÜFE (${oncekiSatis}):</strong> ${yiufeSatis}</p>
-      <p><strong>Artış yüzdesi:</strong> ${(artisYuzdesi * 100).toFixed(2)}%</p>
+      <div class="result">
+        <i class="fa-solid fa-square-poll-vertical"></i> <strong>Düzeltilmiş maliyet:</strong> ${duzeltilmisMaliyet.toLocaleString("tr-TR",{maximumFractionDigits:2})} TL<br>
+        <i class="fa-solid fa-chart-line"></i> <strong>Enflasyon düzeltilmiş kazanç:</strong> ${kazanc.toLocaleString("tr-TR",{maximumFractionDigits:2})} TL<br>
+        <i class="fa-solid fa-percent"></i> <strong>Ödenecek vergi (%15):</strong> ${vergi.toLocaleString("tr-TR",{maximumFractionDigits:2})} TL
+        <hr>
+        <i class="fa-solid fa-arrow-trend-up"></i> <strong>Yİ-ÜFE (${oncekiAlis}):</strong> ${yiufeAlis} <br>
+        <i class="fa-solid fa-arrow-trend-up"></i> <strong>Yİ-ÜFE (${oncekiSatis}):</strong> ${yiufeSatis} <br>
+        <i class="fa-solid fa-chart-simple"></i> <strong>Artış yüzdesi:</strong> ${(artisYuzdesi * 100).toLocaleString("tr-TR",{maximumFractionDigits:2})}%
+      </div>
     `;
   }
+
+  document.getElementById("hesaplaBtn").addEventListener("click", hesapla);
+
+  // Enter tuşu ile hesapla
+  document.getElementById("vergiForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    hesapla();
+  });
+
 </script>
 </body>
 </html>
