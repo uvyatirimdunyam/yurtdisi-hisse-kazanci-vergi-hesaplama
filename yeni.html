@@ -56,6 +56,28 @@
     }
     .error {
       color: red;
+
+    .form-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;  /* Hepsi eşit genişlikte */
+    min-width: 150px;
+  }
+  .form-group label {
+    padding: 4px 8px;
+    color: #fff;
+    border-radius: 4px 4px 0 0;
+  }
+  input, select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 0 0 4px 4px;
     }
   </style>
 </head>
@@ -73,26 +95,40 @@
 
 </p>
 
-  <label style="background-color:Tomato;">Alış Tutarı (TL):</label>
-  <input type="number" id="alis" />
+ 
+<div class="form-row">
+  <div class="form-group">
+    <label style="background-color:Tomato;">Alış Tutarı (TL):</label>
+    <input type="number" id="alis" />
+  </div>
 
-  <label>Alış Ayı:</label>
-  <select id="alisAy"></select>
+  <div class="form-group">
+    <label style="background-color:SlateGray;">Alış Ayı:</label>
+    <select id="alisAy"></select>
+  </div>
 
-  <label>Alış Yılı:</label>
-  <select id="alisYil"></select>
+  <div class="form-group">
+    <label style="background-color:SlateGray;">Alış Yılı:</label>
+    <select id="alisYil"></select>
+  </div>
+</div>
 
-  <label style="background-color:DodgerBlue;">Satış Tutarı (TL):</label>
-  <input type="number" id="satis" />
+<div class="form-row">
+  <div class="form-group">
+    <label style="background-color:DodgerBlue;">Satış Tutarı (TL):</label>
+    <input type="number" id="satis" />
+  </div>
 
+  <div class="form-group">
+    <label style="background-color:SlateGray;">Satış Ayı:</label>
+    <select id="satisAy"></select>
+  </div>
 
-  <label>Satış Ayı:</label>
-  <select id="satisAy"></select>
-
-  <label>Satış Yılı:</label>
-  <select id="satisYil"></select>
-
-  <button onclick="hesapla()">Hesapla</button>
+  <div class="form-group">
+    <label style="background-color:SlateGray;">Satış Yılı:</label>
+    <select id="satisYil"></select>
+  </div>
+</div>
 
   <div id="sonuc" class="result"></div>
 </div>
